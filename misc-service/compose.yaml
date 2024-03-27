@@ -1,0 +1,13 @@
+services:
+  mysql:
+    image: mysql:8.0.30
+    container_name: mysql
+    environment:
+      - MYSQL_DATABASE=misc
+      - MYSQL_PASSWORD=sagarmatha
+      - MYSQL_ROOT_PASSWORD=sagarmatha
+      - MYSQL_USER=sandesh
+    ports:
+      - 3306:3306
+    expose:
+      - 3306

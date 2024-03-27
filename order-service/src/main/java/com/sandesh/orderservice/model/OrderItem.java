@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -27,4 +28,11 @@ public class OrderItem {
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @JsonBackReference
     private Order order;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        else if (!(obj instanceof OrderItem)) return false;
+        return Objects.equals(this.getId(), ((OrderItem) obj).getId());
+    }
 }

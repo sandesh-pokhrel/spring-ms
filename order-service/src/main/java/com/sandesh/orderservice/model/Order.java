@@ -15,13 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "product_order")
+@NamedEntityGraph(name = "Order.OrderItems",
+        attributeNodes = @NamedAttributeNode("orderItems")
+)
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     public List<OrderItem> orderItems;
 }
