@@ -2,7 +2,10 @@ package com.sandesh.miscservice.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
@@ -29,7 +32,7 @@ public class BatchConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager ptm;
 
-    @Bean
+    // @Bean
     public CommandLineRunner jobRunner(Job complexJob, JobLauncher jobLauncher) {
         return args -> jobLauncher.run(complexJob,
                 new JobParameters(
