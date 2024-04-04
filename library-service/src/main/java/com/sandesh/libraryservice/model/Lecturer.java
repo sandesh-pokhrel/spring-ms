@@ -1,9 +1,11 @@
 package com.sandesh.libraryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -12,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Lecturer {
+public class Lecturer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,5 +22,6 @@ public class Lecturer {
     private String name;
     @JsonBackReference
     @ManyToMany(mappedBy = "lecturers")
+    @JsonIgnore
     private List<Course> courses;
 }

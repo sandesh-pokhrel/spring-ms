@@ -1,13 +1,17 @@
 package com.sandesh.libraryservice.controller;
 
+import com.sandesh.libraryservice.config.KafkaConfig;
 import com.sandesh.libraryservice.model.Course;
+import com.sandesh.libraryservice.model.Lecturer;
 import com.sandesh.libraryservice.repository.CourseRepository;
+import com.sandesh.libraryservice.repository.LecturerRepository;
 import com.sandesh.libraryservice.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +27,9 @@ import static java.lang.StringTemplate.STR;
 public class CourseController {
 
     private final CourseRepository courseRepository;
+    private final LecturerRepository lecturerRepository;
     private final CourseService courseService;
+    private final KafkaTemplate<Long, Lecturer> lecturerKafkaTemplate;
 
     @GetMapping
     public List<Course> getAllCourses() {
@@ -90,5 +96,18 @@ public class CourseController {
                 .mapToObj(val -> Course.builder().id((long)val).title(STR."Title \{val}").build())
                 .collect(Collectors.toList());
         courseService.saveCoursesBulk(courses);
+    }
+
+    @GetMapping("/publish-lecturers")
+    public void publishLecturers() {
+        lecturerRepository.findAll()
+                .forEach(lecturer -> lecturerKafkaTemplate.send(KafkaConfig.LECTURER_TOPIC, lecturer)
+                        .whenComplete((result, ex) -> {
+                            if (ex != null) {
+                                log.error("Some error occurred while sending lecturer {}", ex.getMessage());
+                            } else {
+                                log.info("Sent the stuff {} ", result.getProducerRecord().value());
+                            }
+                        }));
     }
 }
